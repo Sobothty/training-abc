@@ -9,6 +9,7 @@ import com.example.trainingfullstack.mapper.UserMapper;
 import com.example.trainingfullstack.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,10 +20,13 @@ public class UserServiceImplement implements UserService{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createUser(RegisterRequest registerRequest) {
         User user = userMapper.toEntity(registerRequest);
+        user.setPassword(
+                passwordEncoder.encode(registerRequest.password()));
         userRepository.save(user);
     }
 
