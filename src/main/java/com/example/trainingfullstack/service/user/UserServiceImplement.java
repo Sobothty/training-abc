@@ -24,6 +24,20 @@ public class UserServiceImplement implements UserService{
 
     @Override
     public void createUser(RegisterRequest registerRequest) {
+        if(userRepository.existsByEmail(registerRequest.email())){
+            throw new AppException(
+                    HttpStatus.BAD_REQUEST,
+                    "User's email is already exit"
+            );
+        }
+
+        if(userRepository.existsByUsername(registerRequest.username())){
+            throw new AppException(
+                    HttpStatus.BAD_REQUEST,
+                    "User's username is already exit"
+            );
+        }
+
         User user = userMapper.toEntity(registerRequest);
         user.setPassword(
                 passwordEncoder.encode(registerRequest.password()));

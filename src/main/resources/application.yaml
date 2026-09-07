@@ -18,3 +18,8 @@ spring:
   sql:
     init:
       mode: never
+
+jwt:
+  private-key: file:./keys/private.pem
+  public-key: file:./keys/public.pem
+  expiration-ms: 3600000
