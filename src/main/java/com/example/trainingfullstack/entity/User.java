@@ -30,6 +30,7 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
+    @Builder.Default
     private Role role = Role.USER;
     private LocalDate createdDate;
     private LocalDate updatedDate;
@@ -46,6 +47,9 @@ public class User {
     protected void onCreated(){
 
         createdDate = LocalDate.now();
+        if (uuid == null) {
+            uuid = java.util.UUID.randomUUID().toString();
+        }
         if (role == null){
             role = Role.USER;
         }

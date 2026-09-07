@@ -1,6 +1,5 @@
 package com.example.trainingfullstack.dto.task;
 
-import com.example.trainingfullstack.entity.TaskStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

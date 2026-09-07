@@ -18,9 +18,11 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, updatable = false, length = 36)
     private String uuid;
+    @Column(nullable = false, length = 150)
     private String title;
+    @Column(length = 1000)
     private String description;
     @Enumerated(EnumType.STRING)
     @Builder.Default

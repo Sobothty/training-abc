@@ -1,11 +1,9 @@
 package com.example.trainingfullstack.security;
 
 import com.example.trainingfullstack.entity.User;
-import com.example.trainingfullstack.exception.AppException;
 import com.example.trainingfullstack.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.jspecify.annotations.NonNull;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,16 +18,31 @@ public class CustomUserDetail implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
-
         User user = userRepository.findUserByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException(
                         "Username not found"
                 )
         );
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .roles(user.getRole().name())
-                .build();
+
+        return toUserDetails(user);
+    }
+
+    public CustomUserDetailResponse loadUserByUuid(String uuid) {
+        User user = userRepository.findByUuid(uuid).orElseThrow(
+                () -> new UsernameNotFoundException(
+                        "User not found"
+                )
+        );
+
+        return toUserDetails(user);
+    }
+
+    private CustomUserDetailResponse toUserDetails(User user) {
+        return new CustomUserDetailResponse(
+                user.getUuid(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getRole().name()
+        );
     }
 }

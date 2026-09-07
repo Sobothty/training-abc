@@ -1,6 +1,5 @@
 package com.example.trainingfullstack.security;
 
-import com.example.trainingfullstack.exception.AppException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -79,23 +78,24 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-    public boolean isValidToken(String token, UserDetails userDetails){
+    public boolean isValidToken(String token, CustomUserDetailResponse userDetails){
         try {
             Claims claims = extractClaims(token);
 
-            return claims.getSubject()
-                    .equals(userDetails.getUsername())
+            return Objects.equals(claims.getSubject(), userDetails.getUuid())
                     && claims.getExpiration().after(new Date());
-        } catch (JwtException exception) {
+        } catch (JwtException | IllegalArgumentException exception) {
             return false;
         }
     }
     public String generateToken(UserDetails userDetails){
+        CustomUserDetailResponse customUserDetailResponse = (CustomUserDetailResponse) userDetails;
         Date issuedAt = new Date();
         Date expiredAt = new Date(issuedAt.getTime() + expirationMs);
 
         return Jwts.builder()
-                .subject(userDetails.getUsername())
+                .subject(customUserDetailResponse.getUuid())
+                .claim("username", customUserDetailResponse.getUsername())
                 .claim(
                         "roles",
                         userDetails.getAuthorities()
@@ -109,7 +109,7 @@ public class JwtService {
                 .signWith(privateKey, Jwts.SIG.RS256)
                 .compact();
     }
-    public String extractUsername(String token){
+    public String extractUserUuid(String token){
         return extractClaims(token).getSubject();
     }
     public long getExpirationSeconds() {

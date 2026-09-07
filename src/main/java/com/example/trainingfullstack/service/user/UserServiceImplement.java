@@ -1,6 +1,7 @@
 package com.example.trainingfullstack.service.user;
 
 import com.example.trainingfullstack.dto.auth.RegisterRequest;
+import com.example.trainingfullstack.dto.user.UserFullResponse;
 import com.example.trainingfullstack.dto.user.UserRequestUpdate;
 import com.example.trainingfullstack.dto.user.UserResponse;
 import com.example.trainingfullstack.entity.User;
@@ -45,10 +46,10 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public List<UserResponse> getAllUser() {
+    public List<UserFullResponse> getAllUser() {
         return userRepository.findAll()
                 .stream()
-                .map(userMapper::toResponse)
+                .map(userMapper::toFullResponse)
                 .toList();
     }
 
@@ -75,16 +76,33 @@ public class UserServiceImplement implements UserService{
     }
 
     @Override
-    public UserResponse updateUserById(Integer id, UserRequestUpdate userRequestUpdate) {
-        User user = userRepository.findById(id).orElseThrow(
+    public UserResponse updateUserByUuid(String uuid, UserRequestUpdate userRequestUpdate) {
+        User user = userRepository.findByUuid(uuid).orElseThrow(
                 () -> new AppException(
                         HttpStatus.NOT_FOUND,
                         "User is not found"
                 )
         );
+
+        if (userRequestUpdate.email() != null
+                && userRepository.existsByEmailAndUuidNot(userRequestUpdate.email(), uuid)) {
+            throw new AppException(
+                    HttpStatus.BAD_REQUEST,
+                    "User's email already exists"
+            );
+        }
+
+        if (userRequestUpdate.username() != null
+                && userRepository.existsByUsernameAndUuidNot(userRequestUpdate.username(), uuid)) {
+            throw new AppException(
+                    HttpStatus.BAD_REQUEST,
+                    "User's username already exists"
+            );
+        }
+
         userMapper.updateEntity(userRequestUpdate, user);
 
-        User users = userRepository.save(user);
-        return userMapper.toResponse(users);
+        User updatedUser = userRepository.save(user);
+        return userMapper.toResponse(updatedUser);
     }
 }

@@ -8,11 +8,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TaskRepository extends JpaRepository<Task, Integer> {
-    List<Task> findAllByUserId(Integer userId);
+    List<Task> findAllByUser_UuidOrderByCreatedAtDesc(String userUuid);
 
-    Optional<Task> findTaskByUserIdAndUuid(Integer userId, String uuid);
+    List<Task> findAllByUser_UuidAndTaskStatusOrderByCreatedAtDesc(
+            String userUuid,
+            TaskStatus taskStatus
+    );
 
-    List<Task> findAllByUserIdAndTaskStatus(Integer userId, TaskStatus taskStatus);
-
-    Optional<Task> findTaskByIdAndUser_Id(Integer id, Integer userId);
+    Optional<Task> findByUuidAndUser_Uuid(String uuid, String userUuid);
 }
