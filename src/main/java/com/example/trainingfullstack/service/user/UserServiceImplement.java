@@ -105,4 +105,15 @@ public class UserServiceImplement implements UserService{
         User updatedUser = userRepository.save(user);
         return userMapper.toResponse(updatedUser);
     }
+
+    @Override
+    public UserResponse currentUser(String username) {
+        User user = userRepository.findUserByUsername(username).orElseThrow(
+                () -> new AppException(
+                        HttpStatus.NOT_FOUND,
+                        "User not found"
+                )
+        );
+        return userMapper.toResponse(user);
+    }
 }

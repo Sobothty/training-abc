@@ -13,4 +13,5 @@ public interface UserService {
     UserResponse getUserById(Integer userId);
     void deleteUserById(Integer id);
     UserResponse updateUserByUuid(String uuid, UserRequestUpdate userRequestUpdate);
+    UserResponse currentUser(String username);
 }

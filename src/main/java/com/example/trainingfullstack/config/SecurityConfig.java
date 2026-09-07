@@ -87,6 +87,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/tasks").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/v1/tasks/{taskUuid}").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/tasks").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/tasks/{taskUuid}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me").hasRole("ADMIN")
 
                         .anyRequest()
                         .authenticated()
